@@ -20,9 +20,15 @@ library_paths = (
 
 for lib in library_paths:
     try:
-        hidapi = ctypes.cdll.LoadLibrary(lib)
+        lib_path = os.path.join(os.path.dirname(__file__), lib)
+        hidapi = ctypes.cdll.LoadLibrary(lib_path)
         break
-    except OSError:
+    except OSError as e:
+        error_message = str(e)
+        check_for = "The specified module could not be found"
+        index = error_message.find(check_for)
+        if index == -1:
+            raise ImportError("In hid module => {}".format(error_message))
         pass
 else:
     error = "Unable to load any of the following libraries:{}"\
